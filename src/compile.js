@@ -282,6 +282,20 @@ Compiler.prototype.outputInterruptTest = function () { // Added by RNL
     return output;
 };
 
+/**
+* Function to test if an interrupt should occur if external Sk.hardInterrupt flag has been set
+* This function is executed at every test/branch operation.
+          if("hardInterrupt" in Sk && Sk.hardInterrupt === true) {
+             throw new Sk.builtin.KeyboardInterrupt("aborted execution");
+         }
+*/
+Compiler.prototype.keyboardInterrupt = function () {
+    var output = "";
+    output += "if (Sk.hasOwnProperty('hardInterrupt') && Sk.hardInterrupt === true) {throw new Sk.builtin.KeyboardInterrupt('aborted execution');}";
+
+    return output;
+};
+
 Compiler.prototype._jumpfalse = function (test, block) {
     var cond = this._gr("jfalse", "(", test, "===false||!Sk.misceval.isTrue(", test, "))");
     out("if(", cond, "){/*test failed */$blk=", block, ";continue;}");
@@ -1578,6 +1592,7 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     // New switch code to catch exceptions
     this.u.switchCode = "while(true){try{"
     this.u.switchCode += this.outputInterruptTest();
+    this.u.switchCode += this.keyboardInterrupt();
     this.u.switchCode += "switch($blk){";
     this.u.suffixCode = "} }catch(err){ if (!(err instanceof Sk.builtin.Exception)) { err = new Sk.builtin.ExternalError(err); } err.traceback.push({lineno: currLineNo, colno: currColNo, filename: '"+this.filename+"'}); if ($exc.length>0) { $err = err; $blk=$exc.pop(); continue; } else { throw err; }} }});";
 
@@ -1819,6 +1834,7 @@ Compiler.prototype.cclass = function (s) {
     }
     this.u.switchCode += "while(true){";
     this.u.switchCode += this.outputInterruptTest();
+    this.u.switchCode += this.keyboardInterrupt();
     this.u.switchCode += "switch($blk){";
     this.u.suffixCode = "}break;}}).apply(null,$rest);});";
 
@@ -2237,6 +2253,7 @@ Compiler.prototype.cmod = function (mod) {
     // New Code:
     this.u.switchCode = "while(true){try{";
     this.u.switchCode += this.outputInterruptTest();
+    this.u.switchCode += this.keyboardInterrupt();
     this.u.switchCode += "switch($blk){";
     this.u.suffixCode = "} }catch(err){ if (!(err instanceof Sk.builtin.Exception)) { err = new Sk.builtin.ExternalError(err); } err.traceback.push({lineno: currLineNo, colno: currColNo, filename: '"+this.filename+"'}); if ($exc.length>0) { $err = err; $blk=$exc.pop(); continue; } else { throw err; }} }" +
         " }catch(err){ if (err instanceof Sk.builtin.SystemExit && !Sk.throwSystemExit) { Sk.misceval.print_(err.toString() + '\\n'); return $loc; } else { throw err; } } });";

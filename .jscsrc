@@ -1,7 +1,6 @@
 {
     "fileExtensions": [ ".js", "jscs" ],
     "disallowMixedSpacesAndTabs": true,
-    "validateIndentation": 4,
 
     "excludeFiles": [
         "src/tokenize.js",
