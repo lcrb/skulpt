@@ -834,17 +834,17 @@ Sk.misceval.asyncToPromise = function(suspendablefn, suspHandlers) {
                             var handlerPromise = handler(r);
                             if (handlerPromise) {
                                 handlerPromise.then(handleResponse, reject);
-                                return null;
+                                return;
                             }
                         }
 
                         if (r.data["type"] == "Sk.promise") {
                             r.data["promise"].then(resumeWithData, resumeWithError);
-                            return null;
+                            return;
 
                         } else if (r.data["type"] == "Sk.yield" && typeof setTimeout === "function") {
                             setTimeout(resume, 0);
-                            return null;
+                            return;
 
                         } else if (r.optional) {
                             // Unhandled optional suspensions just get
