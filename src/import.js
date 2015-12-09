@@ -58,7 +58,7 @@ Sk.loadExternalLibrary = function (name) {
         externalLibraryInfo :
         externalLibraryInfo.path;
 
-    if (typeof path !== "string") {
+    if (typeof path !== "string" && typeof externalLibraryInfo.code !== "string") {
         throw new Sk.builtin.ImportError("Invalid path specified for " + name);
     }
 
@@ -75,7 +75,11 @@ Sk.loadExternalLibrary = function (name) {
         throw new Sk.builtin.ImportError("Invalid file extension specified for " + name);
     }
 
-    module = Sk.loadExternalLibraryInternal_(path, false);
+    if (!externalLibraryInfo.code) {
+        module = Sk.loadExternalLibraryInternal_(path, false);
+    } else {
+        module = externalLibraryInfo.code;
+    }
 
     if (!module) {
         throw new Sk.builtin.ImportError("Failed to load remote module '" + name + "'");
