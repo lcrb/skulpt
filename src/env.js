@@ -27,6 +27,9 @@ Sk.configure = function (options) {
     Sk.debugout = options["debugout"] || Sk.debugout;
     goog.asserts.assert(typeof Sk.debugout === "function");
 
+    Sk.uncaughtException = options["uncaughtException"] || Sk.uncaughtException;
+    goog.asserts.assert(typeof Sk.uncaughtException === "function");
+
     Sk.read = options["read"] || Sk.read;
     goog.asserts.assert(typeof Sk.read === "function");
 
@@ -46,11 +49,8 @@ Sk.configure = function (options) {
     Sk.inputfun = options["inputfun"] || Sk.inputfun;
     goog.asserts.assert(typeof Sk.inputfun === "function");
 
-    Sk.throwSystemExit = options["systemexit"] || false;
-    goog.asserts.assert(typeof Sk.throwSystemExit === "boolean");
-
     Sk.retainGlobals = options["retainglobals"] || false;
-    goog.asserts.assert(typeof Sk.throwSystemExit === "boolean");
+    goog.asserts.assert(typeof Sk.retainGlobals === "boolean");
 
     Sk.debugging = options["debugging"] || false;
     goog.asserts.assert(typeof Sk.debugging === "boolean");
@@ -78,6 +78,14 @@ Sk.configure = function (options) {
     Sk.misceval.softspace_ = false;
 };
 goog.exportSymbol("Sk.configure", Sk.configure);
+
+/*
+ * Replaceable handler for uncaught exceptions
+ */
+Sk.uncaughtException = function(err) {
+    throw err;
+};
+goog.exportSymbol("Sk.uncaughtException", Sk.uncaughtException);
 
 /*
  *	Replaceable message for message timeouts
